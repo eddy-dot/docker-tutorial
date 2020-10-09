@@ -1,0 +1,57 @@
+version: '3.1'  
+
+volumes:
+  mysqlvolume:
+
+networks:
+  backend:
+  frontend:
+
+services:   
+
+  ghost:    
+    image: ghost:3-alpine   
+    restart: always /
+    ports:      
+      - 8080:2368
+    environment:    
+      # see https://docs.ghost.org/docs/config#section-running-ghost-with-config-env-variables
+      database__client: mysql
+      database__connection__host: db
+      database__connection__user: root
+      database__connection__password: example
+      database__connection__database: ghost
+      # this url value is just an example, and is likely wrong for your environment!
+      url: http://localhost:8080
+      networks:
+        - backend
+        - frontend
+      mem_reservation: 521M
+      em_limit: 718M
+      cpus: 0.4 
+
+  db:   
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d
+      - mysqlvolume:/var/lib/mysql
+    networks:
+      - backend
+    mem_reservation: 718M
+    em_limit: 1024M
+    cpus: 0.4
+      
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+    networks:
+      - backend
+      - frontend
+    mem_reservation: 128M
+    em_limit: 256M
+    cpus: 0.1
