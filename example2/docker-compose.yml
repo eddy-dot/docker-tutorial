@@ -17,7 +17,7 @@ services:
       # this url value is just an example, and is likely wrong for your environment!
       url: http://localhost:8080
 
-  db:   //database container
+  db:   
     image: mysql:5.7
     restart: always
     environment:
